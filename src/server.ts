@@ -9,20 +9,21 @@ app.use(express.json())
 
 app.get("/movies", async (_, res) => {
     try {
-    const movies = await prisma.movie.findMany({
-        orderBy: {
-            title: 'asc'
-        },
-        include: {
-            genres: true,
-            languages: true
-        }
-    })
-    return res.status(200).json(movies)
-} catch (e) {
-    console.error(e)
-    return res.status(500).json({"error": "Erro ao buscar filmes"})
-}})
+        const movies = await prisma.movie.findMany({
+            orderBy: {
+                title: 'asc'
+            },
+            include: {
+                genres: true,
+                languages: true
+            }
+        })
+        return res.status(200).json(movies)
+    } catch (e) {
+        console.error(e)
+        return res.status(500).json({ "error": "Erro ao buscar filmes" })
+    }
+})
 
 
 app.post("/movies", async (req, res) => {
@@ -31,6 +32,14 @@ app.post("/movies", async (req, res) => {
 
 
     try {
+
+        const movieWithSameTitle = await prisma.movie.findFirst({
+            where: { title: {equals: title, mode: "insensitive"} },      
+        })
+        if (movieWithSameTitle) {
+            return res.status(409).send({ "error": "Já existe um filme cadastrado com esse titulo" })
+        }
+
         await prisma.movie.create({
             data: {
                 title,
@@ -40,13 +49,13 @@ app.post("/movies", async (req, res) => {
                 release_date: new Date(release_date)
             }
         })
-        res.status(201).send({"message": "Filme cadastrado com sucesso"})
+        res.status(201).send({ "message": "Filme cadastrado com sucesso" })
 
     } catch (e) {
         console.error(e)
-        res.status(500).send({"error": "Erro ao cadastrar filme"})
-    }  
-    
+        res.status(500).send({ "error": "Erro ao cadastrar filme" })
+    }
+
 })
 
 
