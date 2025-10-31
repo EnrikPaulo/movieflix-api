@@ -1,9 +1,11 @@
 import express from "express"
 import { PrismaClient } from "@prisma/client";
+import { log } from "console";
+
 
 const port = 3000;
 const app = express()
-const prisma = new PrismaClient
+const prisma = new PrismaClient()
 
 app.use(express.json())
 
@@ -34,7 +36,7 @@ app.post("/movies", async (req, res) => {
     try {
 
         const movieWithSameTitle = await prisma.movie.findFirst({
-            where: { title: {equals: title, mode: "insensitive"} },      
+            where: { title: { equals: title, mode: "insensitive" } },
         })
         if (movieWithSameTitle) {
             return res.status(409).send({ "error": "Já existe um filme cadastrado com esse titulo" })
@@ -58,9 +60,38 @@ app.post("/movies", async (req, res) => {
 
 })
 
+app.put("/movies/:id", async (req, res) => {
+    const id = Number(req.params.id);
+try{
+const movie = await prisma.movie.findUnique({
+    where: { id }
+}) 
+if (!movie){
+    return res.status(404).send({ "error": "Filme nao encontrado" })
+}
+
+    const data = { ...req.body };
+    data.release_date = data.release_date ? new Date(data.release_date) : undefined;
+   
+        await prisma.movie.update({
+            where: { id  },
+            data: {
+                title: data.title,
+                genre_id: data.genre_id,    
+                language_id: data.language_id,
+                oscar_count: data.oscar_count,
+                release_date: data.release_date
+            } 
+        });
+    } catch (error) {
+        return res.status(500).send({ "error": "Erro ao atualizar filme" })
+    }
+        res.status(200).send();
+    
+})
+
 
 app.listen(port, () => {
     console.log(`Servidor execução na porta ${port}`)
 })
-
 

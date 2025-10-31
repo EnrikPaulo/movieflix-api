@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@prisma/client": "^6.18.0",
+    "date-fns": "^4.1.0",
     "express": "^5.1.0"
   }
 }
