@@ -23,7 +23,9 @@
   },
   "dependencies": {
     "@prisma/client": "^6.18.0",
+    "@types/swagger-ui-express": "^4.1.8",
     "date-fns": "^4.1.0",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "swagger-ui-express": "^5.0.1"
   }
 }
