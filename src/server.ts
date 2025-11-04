@@ -92,6 +92,25 @@ if (!movie){
     
 })
 
+app.patch("/movies/:id", async (req, res) => {
+    const id = Number(req.params.id);
+    try{
+    const movie = await prisma.movie.findUnique({
+        where: { id }
+    })
+    if (!movie){
+        return res.status(404).send({ "error": "Filme nao encontrado" })
+    }
+    await prisma.movie.update({
+        where: { id },
+        data: req.body
+    })
+    } catch (error) {
+        return res.status(500).send({ "error": "Erro ao atualizar filme" })
+    }
+    res.status(200).send({"message": "Filme atualizado com sucesso"})
+})
+
 app.delete("/movies/:id", async (req, res) => {
     const id = Number(req.params.id);
     try{

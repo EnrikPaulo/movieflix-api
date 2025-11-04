@@ -27,6 +27,52 @@
                         }
                     }
                 }
+            },
+            "post": {
+                "tags": [
+                    "Movie"
+                ],
+                "summary": "Cadastrar um filme",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MovieInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Filme cadastrado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Movie"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Já existe um filme cadastrado com esse titulo",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Falha ao cadastrar filme"
+                    }
+                }
             }
         },
         "/movies/{id}": {
@@ -64,7 +110,45 @@
                         "description": "Filme nao encontrado"
                     },
                     "500": {
-                        "description": "Falaha ao encontrar filme"
+                        "description": "Falha ao encontrar filme"
+                    }
+                }
+            },
+            "patch": {
+                "summary": "Atualizar parcialmente um filme",
+                "tags": [
+                    "Movie"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "description": "ID do filme a ser atualizado",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MoviePartialInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Filme atualizado com sucesso"
+                    },
+                    "404": {
+                        "description": "Filme nao encontrado"
+                    },
+                    "500": {
+                        "description": "Falha ao atualizar filme"
                     }
                 }
             },
@@ -201,6 +285,32 @@
                     "oscar_count",
                     "release_date"
                 ],
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "description": "Título do filme"
+                    },
+                    "genre_id": {
+                        "type": "integer",
+                        "description": "Gênero do filme"
+                    },
+                    "language_id": {
+                        "type": "integer",
+                        "description": "Idioma do filme"
+                    },
+                    "oscar_count": {
+                        "type": "integer",
+                        "description": "Quantidade de Óscar ganhos pelo filme"
+                    },
+                    "release_date": {
+                        "type": "string",
+                        "format": "date",
+                        "description": "Data de lançamento do filme"
+                    }
+                }
+            },
+            "MoviePartialInput": {
+                "type": "object",
                 "properties": {
                     "title": {
                         "type": "string",
